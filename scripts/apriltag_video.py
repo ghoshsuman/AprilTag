@@ -3,14 +3,18 @@
 from argparse import ArgumentParser
 import os
 import cv2
-import apriltag
+from . import apriltag
+
+# print(apriltag.get_dll_path())
 
 ################################################################################
 
-def apriltag_video(input_streams=['../media/input/single_tag.mp4', '../media/input/multiple_tags.mp4'], # For default cam use -> [0]
-                   output_stream=False,
+def apriltag_video(input_streams=['/home/suman/projects/spad_dataset/data/video.mp4'], # For default cam use -> [0]
+                   output_stream=True,
                    display_stream=True,
                    detection_window_name='AprilTag',
+                   camera_params=(923.57, 923.94, 641.69, 365.36),
+                   tag_size=0.06
                   ):
 
     '''
@@ -47,11 +51,12 @@ def apriltag_video(input_streams=['../media/input/single_tag.mp4', '../media/inp
             codec = cv2.VideoWriter_fourcc(*'XVID')
             if type(stream) != int:
                 output_path = '../media/output/'+str(os.path.split(stream)[1])
-                output_path = output_path.replace(str(os.path.splitext(stream)[1]), '.avi')
+                output_path = output_path.replace(str(os.path.splitext(stream)[1]), '.mp4')
             else:
-                output_path = '../media/output/'+'camera_'+str(stream)+'.avi'
+                output_path = '../media/output/'+'camera_'+str(stream)+'.mp4'
             output = cv2.VideoWriter(output_path, codec, fps, (width, height))
 
+        result_video = []
         while(video.isOpened()):
 
             success, frame = video.read()
@@ -60,12 +65,15 @@ def apriltag_video(input_streams=['../media/input/single_tag.mp4', '../media/inp
 
             result, overlay = apriltag.detect_tags(frame,
                                                    detector,
-                                                   camera_params=(3156.71852, 3129.52243, 359.097908, 239.736909),
-                                                   tag_size=0.0762,
+                                                   camera_params=camera_params, #(3156.71852, 3129.52243, 359.097908, 239.736909),
+                                                   tag_size=tag_size, #0.0762,
                                                    vizualization=3,
                                                    verbose=3,
                                                    annotation=True
                                                   )
+
+            result_video.append(result)
+
             if output_stream:
                 output.write(overlay)
 
@@ -73,7 +81,7 @@ def apriltag_video(input_streams=['../media/input/single_tag.mp4', '../media/inp
                 cv2.imshow(detection_window_name, overlay)
                 if cv2.waitKey(1) & 0xFF == ord(' '): # Press space bar to terminate
                     break
-
+    return result_video
 ################################################################################
 
 if __name__ == '__main__':

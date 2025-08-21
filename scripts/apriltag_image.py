@@ -7,10 +7,12 @@ import apriltag
 
 ################################################################################
 
-def apriltag_image(input_images=['../media/input/single_tag.jpg', '../media/input/multiple_tags.jpg'],
+def apriltag_image(input_images=['/home/suman/projects/spad_dataset/data/test_single_tag_all.png'],
                    output_images=False,
                    display_images=True,
                    detection_window_name='AprilTag',
+                   camera_params = (923.57, 923.94, 641.69, 365.36),
+                   tag_size = 0.06
                   ):
 
     '''
@@ -39,11 +41,12 @@ def apriltag_image(input_images=['../media/input/single_tag.jpg', '../media/inpu
         img = cv2.imread(image)
 
         print('Reading {}...\n'.format(os.path.split(image)[1]))
+        # K =  [923.565673828125, 0.0, 641.6881713867188, 0.0, 923.939208984375, 365.9615478515625, 0.0, 0.0, 1.0]
 
         result, overlay = apriltag.detect_tags(img,
                                                detector,
-                                               camera_params=(3156.71852, 3129.52243, 359.097908, 239.736909),
-                                               tag_size=0.0762,
+                                               camera_params=camera_params,
+                                               tag_size=tag_size,
                                                vizualization=3,
                                                verbose=3,
                                                annotation=True
