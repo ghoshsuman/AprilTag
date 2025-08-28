@@ -50,10 +50,10 @@ def apriltag_video(input_streams=['/home/suman/projects/spad_dataset/data/video.
             fps = int(video.get(cv2.CAP_PROP_FPS))
             codec = cv2.VideoWriter_fourcc(*'XVID')
             if type(stream) != int:
-                output_path = '../media/output/'+str(os.path.split(stream)[1])
+                output_path = 'data/output/'+str(os.path.split(stream)[1])
                 output_path = output_path.replace(str(os.path.splitext(stream)[1]), '.mp4')
             else:
-                output_path = '../media/output/'+'camera_'+str(stream)+'.mp4'
+                output_path = 'data/output/'+'camera_'+str(stream)+'.mp4'
             output = cv2.VideoWriter(output_path, codec, fps, (width, height))
 
         result_video = []
